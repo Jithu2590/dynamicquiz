@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Quiz Application</title>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1>Quiz Application</h1>
+        </div>
+        <div class="quiz-content">
+            <div class="question-container">
+                <p id="question-text">What is the capital of France?</p>
+                <ul id="options-list"></ul>
+            </div>
+            <button id="previous-button" disabled>Previous</button>
+            <button id="next-button">Next</button>
+        </div>
+        <div class="quiz-footer">
+            <p id="score">Score: 0</p>
+        </div>
+    </div>
+    <style>
+        body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom right, #FFAC81, #FF928B);
+    color: white;
+    text-align: center;
+}
+
+.quiz-container {
+    background: rgba(0, 0, 0, 0.7);
+    max-width: 500px;
+    margin: 20px auto;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
+}
+
+.quiz-header {
+    margin-bottom: 20px;
+}
+
+.quiz-header h1 {
+    font-size: 24px;
+    color: #FFC5A0;
+}
+
+.quiz-content {
+    padding: 20px;
+}
+
+.question-container {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.question-container p {
+    font-size: 20px;
+    color: #FFC5A0;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    font-size: 16px;
+    cursor: pointer;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    background: #FFAC81;
+    color: white;
+    transition: background 0.3s ease;
+}
+
+li:hover {
+    background: #FF928B;
+}
+
+#previous-button, #next-button {
+    background: #FF928B;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+#previous-button:disabled,
+#previous-button:disabled:hover {
+    background: #B5B5B5;
+    cursor: not-allowed;
+}
+
+#next-button:hover {
+    background: #FFAC81;
+}
+
+.quiz-footer p {
+    font-size: 18px;
+    color: #FFC5A0;
+}
+
+    </style>
+    <script>const quizData = 
+        [
+            {
+                question: "What is the capital of France?",
+                options: ["New York", "London", "Paris", "Dublin"],
+                answer: "Paris"
+            },
+            {
+                question: "Who painted the Mona Lisa?",
+                options: ["Vincent Van Gogh", "Pablo Picasso", "Leonardo Da Vinci", "Claude Monet"],
+                answer: "Leonardo Da Vinci"
+            },
+            {
+                question: "What is the largest planet in our solar system?",
+                options: ["Mars", "Earth", "Jupiter", "Venus"],
+                answer: "Jupiter"
+            },
+            {
+                question: "Which gas do plants absorb from the atmosphere?",
+                options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
+                answer: "Carbon Dioxide"
+            },
+            {
+                question: "What is the powerhouse of the cell?",
+                options: ["Nucleus", "Mitochondria", "Chloroplast", "Ribosome"],
+                answer: "Mitochondria"
+            },
+            {
+                question: "Who is the author of 'To Kill a Mockingbird'?",
+                options: ["J.K. Rowling", "Mark Twain", "Harper Lee", "Charles Dickens"],
+                answer: "Harper Lee"
+            },
+            {
+                question: "What is the chemical symbol for gold?",
+                options: ["Au", "Ag", "Fe", "Hg"],
+                answer: "Au"
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Mars", "Venus", "Mercury", "Saturn"],
+                answer: "Mars"
+            },
+            {
+                question: "What is the largest mammal in the world?",
+                options: ["African Elephant", "Giraffe", "Blue Whale", "Gorilla"],
+                answer: "Blue Whale"
+            },
+            {
+                question: "In which year did the Titanic sink?",
+                options: ["1912", "1915", "1920", "1907"],
+                answer: "1912"
+            }
+        
+        
+        // Add more questions here
+    ];
+    
+    let currentQuestion = 0;
+    let score = 0;
+    
+    const questionText = document.getElementById("question-text");
+    const optionsList = document.getElementById("options-list");
+    const nextButton = document.getElementById("next-button");
+    const previousButton = document.getElementById("previous-button");
+    const scoreText = document.getElementById("score");
+    
+    function loadPreviousQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+            if (currentQuestion === 0) {
+                previousButton.disabled = true;
+            }
+        }
+    }
+    
+    previousButton.addEventListener("click", loadPreviousQuestion);
+    
+    function loadQuestion() {
+        previousButton.disabled = false;
+        const currentQuizData = quizData[currentQuestion];
+        questionText.innerText = currentQuizData.question;
+        optionsList.innerHTML = "";
+        currentQuizData.options.forEach((option) => {
+            const li = document.createElement("li");
+            li.innerText = option;
+            li.addEventListener("click", () => checkAnswer(option));
+            optionsList.appendChild(li);
+        });
+    }
+    
+    if (currentQuestion === 0) {
+        previousButton.disabled = true;
+    }
+    
+    function checkAnswer(selectedOption) {
+        const currentQuizData = quizData[currentQuestion];
+        if (selectedOption === currentQuizData.answer) {
+            score++;
+        }
+        currentQuestion++;
+    
+        if (currentQuestion < quizData.length) {
+            loadQuestion();
+        } else {
+            endQuiz();
+        }
+    }
+    
+    function endQuiz() {
+        questionText.innerText = "Quiz completed!";
+        optionsList.innerHTML = "";
+        nextButton.style.display = "none";
+        previousButton.style.display = "none";
+        scoreText.innerText = `Your Score: ${score} out of ${quizData.length}`;
+    }
+    
+    loadQuestion();
+    
+    nextButton.addEventListener("click", () => {
+        currentQuestion++;
+        if (currentQuestion < quizData.length) {
+            loadQuestion();
+        } else {
+            endQuiz();
+        }
+    });
+    </script>
+</body>
+</html>
